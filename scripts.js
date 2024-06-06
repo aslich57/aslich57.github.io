@@ -1,15 +1,43 @@
 fetch('bikesales.json')
 .then(response => response.json())
 .then(data => {
-    // Calculate total values
-    const totalOrderQuantity = data.orderQuantityByYear.reduce((a, b) => a + b, 0);
-    const totalRevenue = data.revenueByYear.reduce((a, b) => a + b, 0);
-    const totalProfit = data.totalProfitBySubCategory.reduce((a, b) => a + b, 0);
+    // Populate year filter dropdown
+    const yearFilter = document.getElementById('yearFilter');
+    data.years.forEach(year => {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearFilter.appendChild(option);
+    });
 
-    // Display total values
-    document.getElementById('totalOrderQuantity').textContent = totalOrderQuantity;
-    document.getElementById('totalProfit').textContent = totalProfit;
-    document.getElementById('totalRevenue').textContent = totalRevenue;
+    // Function to update the displayed totals based on selected year
+    function updateTotals(selectedYear) {
+        let totalOrderQuantity, totalRevenue, totalProfit;
+
+        if (selectedYear === 'all') {
+            totalOrderQuantity = data.orderQuantityByYear.reduce((a, b) => a + b, 0);
+            totalRevenue = data.revenueByYear.reduce((a, b) => a + b, 0);
+            totalProfit = data.totalProfitBySubCategory.reduce((a, b) => a + b, 0);
+        } else {
+            const yearIndex = data.years.indexOf(selectedYear);
+            totalOrderQuantity = data.orderQuantityByYear[yearIndex];
+            totalRevenue = data.revenueByYear[yearIndex];
+            totalProfit = data.totalProfitBySubCategory.reduce((a, b) => a + b, 0); // Assuming totalProfit is not yearly specific
+        }
+
+        document.getElementById('totalOrderQuantity').textContent = totalOrderQuantity;
+        document.getElementById('totalProfit').textContent = totalProfit;
+        document.getElementById('totalRevenue').textContent = totalRevenue;
+    }
+
+    // Initial totals display
+    updateTotals('all');
+
+    // Add event listener for year filter change
+    yearFilter.addEventListener('change', (event) => {
+        const selectedYear = event.target.value;
+        updateTotals(selectedYear);
+    });
 
     // Create chart for Order Quantity by Year
     const ctxOrderQuantityByYear = document.getElementById('orderQuantityByYear').getContext('2d');
