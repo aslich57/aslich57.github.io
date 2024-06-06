@@ -1,7 +1,7 @@
 fetch('bikesales.json')
 .then(response => response.json())
 .then(data => {
-    // Populate year filter dropdown
+ 
     const yearFilter = document.getElementById('yearFilter');
     data.years.forEach(year => {
         const option = document.createElement('option');
@@ -10,7 +10,7 @@ fetch('bikesales.json')
         yearFilter.appendChild(option);
     });
 
-    // Function to update the displayed totals based on selected year
+ 
     function updateTotals(selectedYear) {
         let totalOrderQuantity, totalRevenue, totalProfit;
 
@@ -22,7 +22,7 @@ fetch('bikesales.json')
             const yearIndex = data.years.indexOf(selectedYear);
             totalOrderQuantity = data.orderQuantityByYear[yearIndex];
             totalRevenue = data.revenueByYear[yearIndex];
-            totalProfit = data.totalProfitBySubCategory.reduce((a, b) => a + b, 0); // Assuming totalProfit is not yearly specific
+            totalProfit = data.totalProfitBySubCategory.reduce((a, b) => a + b, 0);
         }
 
         document.getElementById('totalOrderQuantity').textContent = totalOrderQuantity;
@@ -30,16 +30,29 @@ fetch('bikesales.json')
         document.getElementById('totalRevenue').textContent = totalRevenue;
     }
 
-    // Initial totals display
+
     updateTotals('all');
 
-    // Add event listener for year filter change
     yearFilter.addEventListener('change', (event) => {
         const selectedYear = event.target.value;
         updateTotals(selectedYear);
     });
 
-    // Create chart for Order Quantity by Year
+    const tableBody = document.querySelector('#bikeSalesTable tbody');
+    data.years.forEach((year, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${year}</td>
+            <td>${data.orderQuantityByYear[index]}</td>
+            <td>${data.revenueByYear[index]}</td>
+           `;
+        tableBody.appendChild(row);
+    });
+
+    $(document).ready(function() {
+        $('#bikeSalesTable').DataTable();
+    });
+
     const ctxOrderQuantityByYear = document.getElementById('orderQuantityByYear').getContext('2d');
     new Chart(ctxOrderQuantityByYear, {
         type: 'bar',
@@ -62,7 +75,6 @@ fetch('bikesales.json')
         }
     });
 
-    // Create chart for Revenue by Year
     const ctxRevenueByYear = document.getElementById('revenueByYear').getContext('2d');
     new Chart(ctxRevenueByYear, {
         type: 'bar',
@@ -85,7 +97,6 @@ fetch('bikesales.json')
         }
     });
 
-    // Create chart for Order Quantity by Gender
     const ctxOrderQuantityByGender = document.getElementById('orderQuantityByGender').getContext('2d');
     new Chart(ctxOrderQuantityByGender, {
         type: 'pie',
@@ -104,7 +115,6 @@ fetch('bikesales.json')
         }
     });
 
-    // Create chart for Order Quantity by Season
     const ctxOrderQuantityBySeason = document.getElementById('orderQuantityBySeason').getContext('2d');
     new Chart(ctxOrderQuantityBySeason, {
         type: 'bar',
@@ -127,7 +137,6 @@ fetch('bikesales.json')
         }
     });
 
-    // Create chart for Order Quantity by SubCategory
     const ctxOrderQuantityBySubCategory = document.getElementById('orderQuantityBySubCategory').getContext('2d');
     new Chart(ctxOrderQuantityBySubCategory, {
         type: 'bar',
@@ -150,7 +159,6 @@ fetch('bikesales.json')
         }
     });
 
-    // Create chart for Revenue by SubCategory
     const ctxRevenueBySubCategory = document.getElementById('revenueBySubCategory').getContext('2d');
     new Chart(ctxRevenueBySubCategory, {
         type: 'bar',
@@ -173,7 +181,6 @@ fetch('bikesales.json')
         }
     });
 
-    // Create chart for Total Profit by SubCategory
     const ctxTotalProfitBySubCategory = document.getElementById('totalProfitBySubCategory').getContext('2d');
     new Chart(ctxTotalProfitBySubCategory, {
         type: 'bar',
@@ -196,7 +203,6 @@ fetch('bikesales.json')
         }
     });
 
-    // Create chart for Order Quantity by Country
     const ctxOrderQuantityByCountry = document.getElementById('orderQuantityByCountry').getContext('2d');
     new Chart(ctxOrderQuantityByCountry, {
         type: 'bar',
@@ -219,7 +225,6 @@ fetch('bikesales.json')
         }
     });
 
-    // Create chart for Revenue by Country
     const ctxRevenueByCountry = document.getElementById('revenueByCountry').getContext('2d');
     new Chart(ctxRevenueByCountry, {
         type: 'bar',
